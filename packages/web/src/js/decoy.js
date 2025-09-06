@@ -209,4 +209,7 @@ function setupDecoyForm() {
     } else {
         console.error('Start button not found!');
     }
+    
+    // 폴더 선택 기능 설정
+    setupFolderSelectors();
 }

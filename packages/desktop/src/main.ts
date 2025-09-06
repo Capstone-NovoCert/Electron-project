@@ -1,6 +1,7 @@
 import { app, BrowserWindow, ipcMain, net } from 'electron';
 import * as path from 'path';
 import { spawn } from 'child_process';
+import { readFileSync } from 'fs';
 
 // 개발 모드인지 확인
 const isDev = process.env.NODE_ENV === 'development';
@@ -49,14 +50,18 @@ async function loadResources(): Promise<void> {
       console.log('온라인 모드: localhost:3000에서 리소스 로드');
       await mainWindow.loadURL('http://localhost:3000');
     } else {
-      console.log('오프라인 모드: 로컬 파일에서 리소스 로드');
-      await mainWindow.loadFile(path.join(__dirname, '../../web/dist/index.html'));
+      console.log('오프라인 모드: src 폴더에서 직접 리소스 로드');
+      const offlinePath = path.join(__dirname, '../../web/src/index.html');
+      console.log('오프라인 파일 경로:', offlinePath);
+      await mainWindow.loadFile(offlinePath);
     }
   } catch (error) {
     console.error('리소스 로드 실패:', error);
     // 오프라인 모드로 폴백
     try {
-      await mainWindow.loadFile(path.join(__dirname, '../../web/dist/index.html'));
+      const fallbackPath = path.join(__dirname, '../../web/src/index.html');
+      console.log('폴백 파일 경로:', fallbackPath);
+      await mainWindow.loadFile(fallbackPath);
     } catch (fallbackError) {
       console.error('오프라인 모드도 실패:', fallbackError);
     }
@@ -243,4 +248,19 @@ ipcMain.handle('run-decoy', async (event, params) => {
       });
     }
   });
+});
+
+// HTML 파일 읽기 IPC
+ipcMain.handle('read-html-file', async (event, filePath) => {
+  try {
+    const fullPath = path.join(__dirname, '../../web/src', filePath);
+    const content = readFileSync(fullPath, 'utf-8');
+    return { success: true, content };
+  } catch (error) {
+    console.error('HTML 파일 읽기 오류:', error);
+    return { 
+      success: false, 
+      error: error instanceof Error ? error.message : String(error) 
+    };
+  }
 });

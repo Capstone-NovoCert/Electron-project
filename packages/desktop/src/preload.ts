@@ -8,6 +8,7 @@ const electronAPI = {
   showOpenDialog: (options: any) => ipcRenderer.invoke('show-open-dialog', options),
   showSaveDialog: (options: any) => ipcRenderer.invoke('show-save-dialog', options),
   runDecoy: (params: any) => ipcRenderer.invoke('run-decoy', params),
+  readHtmlFile: (filePath: string) => ipcRenderer.invoke('read-html-file', filePath),
   platform: process.platform,
   isElectron: true,
   isDev: process.env.NODE_ENV === 'development'

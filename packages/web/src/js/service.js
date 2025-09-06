@@ -38,29 +38,59 @@ document.addEventListener('DOMContentLoaded', async function() {
 
 // AJAX를 통해 단계별 콘텐츠를 동적으로 로드
 function loadStepContent(stepName) {
-    const contentUrl = `./html/services/${stepName}.html`;
+    const contentUrl = `html/services/${stepName}.html`;
     
-    fetch(contentUrl)
-        .then(response => response.text())
-        .then(html => {
-            // 파이프라인 콘텐츠 영역에 HTML 삽입
-            document.getElementById('pipeline-content').innerHTML = html;
-            
-            // 새로 로드된 콘텐츠에 이벤트 리스너 재연결
-            attachFormListeners();
-            validateForm();
-            
-            // 파이프라인별 전용 JavaScript 로드
-            loadPipelineSpecificJS(stepName);
-            
-            // 저장된 파라미터 적용
-            if (window.parameterManager) {
-                window.parameterManager.applyParametersToForm(stepName);
-            }
-        })
-        .catch(error => {
-            console.error('단계 콘텐츠 로드 중 오류 발생:', error);
-        });
+    // Electron 환경에서는 IPC를 사용, 웹 환경에서는 fetch 사용
+    if (window.electronAPI && window.electronAPI.readHtmlFile) {
+        // Electron 환경
+        window.electronAPI.readHtmlFile(contentUrl)
+            .then(result => {
+                if (result.success) {
+                    // 파이프라인 콘텐츠 영역에 HTML 삽입
+                    document.getElementById('pipeline-content').innerHTML = result.content;
+                    
+                    // 새로 로드된 콘텐츠에 이벤트 리스너 재연결
+                    attachFormListeners();
+                    validateForm();
+                    
+                    // 파이프라인별 전용 JavaScript 로드
+                    loadPipelineSpecificJS(stepName);
+                    
+                    // 저장된 파라미터 적용
+                    if (window.parameterManager) {
+                        window.parameterManager.applyParametersToForm(stepName);
+                    }
+                } else {
+                    console.error('HTML 파일 읽기 실패:', result.error);
+                }
+            })
+            .catch(error => {
+                console.error('단계 콘텐츠 로드 중 오류 발생:', error);
+            });
+    } else {
+        // 웹 브라우저 환경
+        fetch(contentUrl)
+            .then(response => response.text())
+            .then(html => {
+                // 파이프라인 콘텐츠 영역에 HTML 삽입
+                document.getElementById('pipeline-content').innerHTML = html;
+                
+                // 새로 로드된 콘텐츠에 이벤트 리스너 재연결
+                attachFormListeners();
+                validateForm();
+                
+                // 파이프라인별 전용 JavaScript 로드
+                loadPipelineSpecificJS(stepName);
+                
+                // 저장된 파라미터 적용
+                if (window.parameterManager) {
+                    window.parameterManager.applyParametersToForm(stepName);
+                }
+            })
+            .catch(error => {
+                console.error('단계 콘텐츠 로드 중 오류 발생:', error);
+            });
+    }
 }
 
 // 파이프라인별 전용 JavaScript 로드
