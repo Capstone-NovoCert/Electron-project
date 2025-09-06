@@ -4,26 +4,93 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Novo App</title>
-    <link rel="stylesheet" href="./css/style.css">
 </head>
 <body>
     <div id="app">
         <header>
-            <h1>Novo App</h1>
-            <nav>
-                <ul>
-                    <li><a href="#home">Home</a></li>
-                    <li><a href="#about">About</a></li>
-                    <li><a href="#contact">Contact</a></li>
-                </ul>
-            </nav>
+            <div class="header-left">
+                <h1>Novo App</h1>
+                <nav>
+                    <ul>
+                        <li><a href="#service">Service</a></li>
+                        <li><a href="#about">About</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="header-right">
+                <button id="test-btn">Test Button</button>
+                <div id="status"></div>
+            </div>
         </header>
         
         <main>
-            <section id="home">
-                <h2>Welcome to Novo App</h2>
-                <p>Universal app with Electron desktop and web frontend</p>
-                <button id="test-btn">Test Button</button>
+            <section id="service" class="service-container active">
+                <div class="pipeline-sidebar">
+                    <div class="sidebar-header">
+                        <h2>Pipeline Steps</h2>
+                    </div>
+                    <div class="step-list">
+                        <div class="step-item active" data-step="decoy">
+                            <div class="step-number">1</div>
+                            <div class="step-info">
+                                <h3>Decoy</h3>
+                                <p>Decoy sequence generation</p>
+                            </div>
+                        </div>
+                        <div class="step-item" data-step="denovo">
+                            <div class="step-number">2</div>
+                            <div class="step-info">
+                                <h3>De Novo</h3>
+                                <p>De novo sequencing</p>
+                            </div>
+                        </div>
+                        <div class="step-item" data-step="fdr">
+                            <div class="step-number">3</div>
+                            <div class="step-info">
+                                <h3>FDR</h3>
+                                <p>False discovery rate</p>
+                            </div>
+                        </div>
+                        <div class="step-item" data-step="percolator">
+                            <div class="step-number">4</div>
+                            <div class="step-info">
+                                <h3>Percolator</h3>
+                                <p>Percolator analysis</p>
+                            </div>
+                        </div>
+                        <div class="step-item" data-step="pif">
+                            <div class="step-number">5</div>
+                            <div class="step-info">
+                                <h3>PIF</h3>
+                                <p>Peptide identification</p>
+                            </div>
+                        </div>
+                        <div class="step-item" data-step="post">
+                            <div class="step-number">6</div>
+                            <div class="step-info">
+                                <h3>Post</h3>
+                                <p>Post-processing</p>
+                            </div>
+                        </div>
+                        <div class="step-item" data-step="sa">
+                            <div class="step-number">7</div>
+                            <div class="step-info">
+                                <h3>SA</h3>
+                                <p>Statistical analysis</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="pipeline-content" id="pipeline-content">
+                    <div class="content-header">
+                        <h2>Pipeline Configuration</h2>
+                    </div>
+                    <div class="content-body">
+                        <p>Select a step from the sidebar to configure parameters.</p>
+                    </div>
+                </div>
             </section>
         </main>
         
@@ -33,5 +100,6 @@
     </div>
     
     <script type="module" src="./js/main.js"></script>
+    <script type="module" src="./js/service.js"></script>
 </body>
 </html>

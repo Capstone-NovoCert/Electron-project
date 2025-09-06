@@ -1,4 +1,6 @@
 // Main JavaScript file for Novo App
+import '../css/style.css';
+import '../css/service.css';
 
 console.log('Novo App loaded successfully!');
 
@@ -76,6 +78,36 @@ if (isElectron && window.electronAPI.reloadResources) {
     testBtn.parentNode.appendChild(reloadBtn);
 }
 
+// Navigation functionality
+function initNavigation() {
+    const navLinks = document.querySelectorAll('nav a');
+    const sections = document.querySelectorAll('main section');
+    
+    navLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').substring(1);
+            
+            // Hide all sections
+            sections.forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Show target section
+            const targetSection = document.getElementById(targetId);
+            if (targetSection) {
+                targetSection.classList.add('active');
+            }
+        });
+    });
+    
+    // Service section is active by default
+    const serviceSection = document.getElementById('service');
+    if (serviceSection) {
+        serviceSection.classList.add('active');
+    }
+}
+
 // Utility functions
 function showMessage(message) {
     console.log(message);
@@ -86,6 +118,7 @@ function showMessage(message) {
 document.addEventListener('DOMContentLoaded', async () => {
     showMessage('Novo App 초기화 중...');
     await checkOnlineStatus();
+    initNavigation();
 });
 
 // Export for potential use in other modules
