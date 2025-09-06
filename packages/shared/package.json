@@ -1,0 +1,19 @@
+{
+  "name": "@novo-app/shared",
+  "version": "1.0.0",
+  "description": "Shared utilities and types",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc -w",
+    "clean": "rm -rf dist",
+    "lint": "eslint src --ext .ts",
+    "type-check": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.5",
+    "eslint": "^8.56.0",
+    "typescript": "^5.3.3"
+  }
+}

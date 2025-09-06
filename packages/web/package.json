@@ -1,0 +1,20 @@
+{
+  "name": "@novo-app/web",
+  "version": "1.0.0",
+  "description": "Web frontend application (Vanilla JS)",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "clean": "rm -rf dist",
+    "lint": "eslint src --ext .js",
+    "serve": "python3 -m http.server 3000 --directory dist"
+  },
+  "dependencies": {
+    "@novo-app/shared": "workspace:*"
+  },
+  "devDependencies": {
+    "vite": "^5.0.10",
+    "eslint": "^8.56.0"
+  }
+}

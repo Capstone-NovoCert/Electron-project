@@ -1,0 +1,51 @@
+{
+  "name": "@novo-app/desktop",
+  "version": "1.0.0",
+  "description": "Electron desktop application",
+  "author": "Novo App Team",
+  "main": "dist/main.js",
+  "scripts": {
+    "dev": "concurrently \"tsc -w\" \"wait-on dist/main.js && electron .\"",
+    "build": "tsc && electron-builder",
+    "build:dir": "tsc && electron-builder --dir",
+    "dist": "tsc && electron-builder --publish=never",
+    "pack": "tsc && electron-builder --dir",
+    "clean": "rm -rf dist out",
+    "lint": "eslint src --ext .ts",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@novo-app/shared": "workspace:*"
+  },
+  "devDependencies": {
+    "electron": "^28.1.0",
+    "@types/node": "^20.10.5",
+    "concurrently": "^8.2.2",
+    "electron-builder": "^24.9.1",
+    "eslint": "^8.56.0",
+    "typescript": "^5.3.3",
+    "wait-on": "^7.2.0"
+  },
+  "build": {
+    "appId": "com.novo-app.desktop",
+    "productName": "Novo App",
+    "directories": {
+      "output": "out"
+    },
+    "files": [
+      "dist/**/*",
+      "binaries/**/*",
+      "package.json"
+    ],
+    "mac": {
+      "category": "public.app-category.productivity",
+      "target": "dmg"
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "linux": {
+      "target": "AppImage"
+    }
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "name": "novo-app",
+  "version": "1.0.0",
+  "description": "Universal app with Electron desktop and web frontend",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "concurrently \"pnpm --filter web dev\" \"pnpm --filter desktop dev\"",
+    "build": "pnpm --filter shared build && pnpm --filter web build && pnpm --filter desktop build",
+    "build:desktop": "pnpm --filter desktop build",
+    "build:web": "pnpm --filter web build",
+    "build:shared": "pnpm --filter shared build",
+    "dev:desktop": "pnpm --filter desktop dev",
+    "dev:web": "pnpm --filter web dev",
+    "clean": "pnpm --filter shared clean && pnpm --filter web clean && pnpm --filter desktop clean",
+    "lint": "pnpm --filter shared lint && pnpm --filter web lint && pnpm --filter desktop lint",
+    "type-check": "pnpm --filter shared type-check && pnpm --filter web type-check && pnpm --filter desktop type-check"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=20.11.0",
+    "pnpm": ">=8.0.0"
+  },
+  "packageManager": "pnpm@8.15.0"
+}
