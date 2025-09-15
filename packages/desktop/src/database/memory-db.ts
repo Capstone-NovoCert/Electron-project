@@ -81,11 +81,15 @@ class MemoryDatabase implements DatabaseInterface {
 // 싱글톤 인스턴스
 export const memoryDB = new MemoryDatabase();
 
-// 추후 실제 DB로 교체할 때 사용할 팩토리 함수
-export function createDatabase(type: 'memory' | 'sqlite' | 'postgres' = 'memory'): DatabaseInterface {
+// 데이터베이스 타입에 따른 인스턴스 생성 팩토리 함수
+export function createDatabase(type: 'memory' | 'json' | 'sqlite' | 'postgres' = 'json'): DatabaseInterface {
   switch (type) {
     case 'memory':
       return memoryDB;
+    case 'json':
+      // JSON 데이터베이스는 동적으로 import하여 순환 의존성 방지
+      const { JsonDatabase } = require('./json-db');
+      return new JsonDatabase();
     // case 'sqlite':
     //   return new SQLiteDatabase();
     // case 'postgres':

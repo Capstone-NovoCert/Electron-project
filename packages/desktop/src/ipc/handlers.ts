@@ -81,4 +81,9 @@ export function registerIpcHandlers(): void {
   ipcMain.handle('get-pipeline-stats', async () => {
     return await PipelineController.getExecutionStats();
   });
+
+  // 특정 타입의 마지막 실행 파라미터 조회
+  ipcMain.handle('get-last-pipeline-params', async (event, pipelineType) => {
+    return await PipelineController.getLastExecutionParams(pipelineType);
+  });
 }

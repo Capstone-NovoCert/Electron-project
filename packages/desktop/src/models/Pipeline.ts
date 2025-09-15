@@ -1,4 +1,4 @@
-import { memoryDB } from '../database/memory-db';
+import { createDatabase } from '../database/memory-db';
 
 export interface PipelineParams {
   input_dir: string;
@@ -22,7 +22,7 @@ export interface PipelineExecution {
 }
 
 export class PipelineModel {
-  private static readonly TABLE_NAME = 'pipelines';
+  private static readonly db = createDatabase('json'); // JSON 데이터베이스 사용
 
   /**
    * 새로운 파이프라인 실행 생성
@@ -34,21 +34,48 @@ export class PipelineModel {
       status: 'pending' as const
     };
 
-    return await memoryDB.create(this.TABLE_NAME, execution) as PipelineExecution;
+    return await this.db.create(pipelineType, execution) as PipelineExecution;
   }
 
   /**
-   * ID로 파이프라인 실행 조회
+   * ID로 파이프라인 실행 조회 (모든 타입에서 검색)
    */
   static async findById(id: string): Promise<PipelineExecution | null> {
-    return await memoryDB.findById(this.TABLE_NAME, id);
+    // 모든 파이프라인 타입에서 검색
+    const pipelineTypes: PipelineExecution['pipelineType'][] = [
+      'decoy', 'denovo', 'fdr', 'percolator', 'pif', 'post', 'sa'
+    ];
+
+    for (const type of pipelineTypes) {
+      const result = await this.db.findById(type, id);
+      if (result) {
+        return result as PipelineExecution;
+      }
+    }
+
+    return null;
   }
 
   /**
-   * 모든 파이프라인 실행 조회
+   * 모든 파이프라인 실행 조회 (모든 타입 통합)
    */
   static async findAll(): Promise<PipelineExecution[]> {
-    return await memoryDB.findAll(this.TABLE_NAME);
+    const allExecutions: PipelineExecution[] = [];
+    
+    // 모든 파이프라인 타입에서 조회
+    const pipelineTypes: PipelineExecution['pipelineType'][] = [
+      'decoy', 'denovo', 'fdr', 'percolator', 'pif', 'post', 'sa'
+    ];
+
+    for (const type of pipelineTypes) {
+      const executions = await this.db.findAll(type);
+      allExecutions.push(...(executions as PipelineExecution[]));
+    }
+
+    // 생성 시간 기준으로 정렬
+    return allExecutions.sort((a, b) => 
+      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
   }
 
   /**
@@ -72,21 +99,45 @@ export class PipelineModel {
       updateData.completedAt = new Date();
     }
 
-    return await memoryDB.update(this.TABLE_NAME, id, updateData);
+    // 먼저 해당 ID가 어느 타입에 속하는지 찾기
+    const pipelineTypes: PipelineExecution['pipelineType'][] = [
+      'decoy', 'denovo', 'fdr', 'percolator', 'pif', 'post', 'sa'
+    ];
+
+    for (const type of pipelineTypes) {
+      const existing = await this.db.findById(type, id);
+      if (existing) {
+        return await this.db.update(type, id, updateData) as PipelineExecution;
+      }
+    }
+
+    return null;
   }
 
   /**
    * 특정 타입의 파이프라인 실행 조회
    */
+
   static async findByType(pipelineType: PipelineExecution['pipelineType']): Promise<PipelineExecution[]> {
-    const allPipelines = await this.findAll();
-    return allPipelines.filter(pipeline => pipeline.pipelineType === pipelineType);
+    return await this.db.findAll(pipelineType) as PipelineExecution[];
   }
 
   /**
    * 파이프라인 실행 삭제
    */
   static async delete(id: string): Promise<boolean> {
-    return await memoryDB.delete(this.TABLE_NAME, id);
+    // 먼저 해당 ID가 어느 타입에 속하는지 찾기
+    const pipelineTypes: PipelineExecution['pipelineType'][] = [
+      'decoy', 'denovo', 'fdr', 'percolator', 'pif', 'post', 'sa'
+    ];
+
+    for (const type of pipelineTypes) {
+      const existing = await this.db.findById(type, id);
+      if (existing) {
+        return await this.db.delete(type, id);
+      }
+    }
+
+    return false;
   }
 }

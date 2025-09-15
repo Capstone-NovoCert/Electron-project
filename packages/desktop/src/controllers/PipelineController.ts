@@ -75,6 +75,24 @@ export class PipelineController {
   }
 
   /**
+   * 특정 타입의 마지막 파이프라인 실행 파라미터 조회
+   */
+  static async getLastExecutionParams(pipelineType: PipelineExecution['pipelineType']): Promise<PipelineParams | null> {
+    const executions = await PipelineModel.findByType(pipelineType);
+    
+    if (executions.length === 0) {
+      return null;
+    }
+
+    // 최신 실행 기록 반환 (createdAt 기준 내림차순)
+    const sortedExecutions = executions.sort((a, b) => 
+      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+
+    return sortedExecutions[0].params;
+  }
+
+  /**
    * 파이프라인 실행 통계 조회
    */
   static async getExecutionStats(): Promise<{

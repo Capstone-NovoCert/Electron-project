@@ -198,6 +198,46 @@ function validateDecoyForm(formData) {
     return result;
 }
 
+// 마지막 Decoy 실행 파라미터 로드
+async function loadLastDecoyParams() {
+    try {
+        if (window.electronAPI && window.electronAPI.getLastPipelineParams) {
+            const lastParams = await window.electronAPI.getLastPipelineParams('decoy');
+            
+            if (lastParams) {
+                console.log('마지막 Decoy 파라미터 로드:', lastParams);
+                
+                // 각 입력 필드에 값 설정
+                const inputDirInput = document.getElementById('input-dir');
+                const outputDirInput = document.getElementById('output-dir');
+                const precursorToleranceInput = document.getElementById('precursor-tolerance');
+                const memoryInput = document.getElementById('memory');
+                const randomSeedInput = document.getElementById('random-seed');
+                
+                if (inputDirInput) inputDirInput.value = lastParams.input_dir || '';
+                if (outputDirInput) outputDirInput.value = lastParams.output_dir || '';
+                if (precursorToleranceInput) precursorToleranceInput.value = lastParams.precursor_tolerance || '';
+                if (memoryInput) memoryInput.value = lastParams.memory || '';
+                if (randomSeedInput) randomSeedInput.value = lastParams.random_seed || '';
+                
+                console.log('Decoy 폼에 마지막 파라미터 적용 완료');
+            } else {
+                console.log('저장된 Decoy 파라미터가 없습니다.');
+            }
+        } else {
+            console.log('Electron API를 사용할 수 없습니다. 로컬 스토리지에서 파라미터를 로드합니다.');
+            
+            // 로컬 스토리지에서 파라미터 로드 (기존 방식)
+            if (window.parameterManager) {
+                await window.parameterManager.loadAllParameters();
+                window.parameterManager.applyParametersToForm('decoy');
+            }
+        }
+    } catch (error) {
+        console.error('마지막 Decoy 파라미터 로드 실패:', error);
+    }
+}
+
 // Decoy 폼 이벤트 리스너 설정
 function setupDecoyForm() {
     const startBtn = document.getElementById('start-btn');
@@ -212,4 +252,7 @@ function setupDecoyForm() {
     
     // 폴더 선택 기능 설정
     setupFolderSelectors();
+    
+    // 마지막 실행 파라미터 로드
+    loadLastDecoyParams();
 }

@@ -1,0 +1,23 @@
+{
+  "mfku2icn4oha28hpajs": {
+    "pipelineType": "decoy",
+    "params": {
+      "input_dir": "/Users/youngjin/Downloads/app/1.Decoy_spectra_generation/sample",
+      "output_dir": "/Users/youngjin/Downloads/app/1.Decoy_spectra_generation/output",
+      "precursor_tolerance": "20",
+      "memory": "16",
+      "random_seed": "100"
+    },
+    "status": "completed",
+    "id": "mfku2icn4oha28hpajs",
+    "createdAt": "2025-09-15T07:59:34.247Z",
+    "updatedAt": "2025-09-15T07:59:45.071Z",
+    "result": {
+      "success": true,
+      "message": "Decoy spectra generation completed successfully!",
+      "hasOutput": true
+    },
+    "startedAt": "2025-09-15T07:59:34.250Z",
+    "completedAt": "2025-09-15T07:59:45.070Z"
+  }
+}

@@ -30,8 +30,13 @@ document.addEventListener('DOMContentLoaded', async function() {
     if (window.parameterManager) {
         console.log('Applying initial parameters for decoy...');
         // 파라미터 매니저가 준비될 때까지 잠시 대기
-        setTimeout(() => {
+        setTimeout(async () => {
             window.parameterManager.applyParametersToForm('decoy');
+            
+            // Decoy인 경우 마지막 실행 파라미터도 로드
+            if (typeof loadLastDecoyParams === 'function') {
+                await loadLastDecoyParams();
+            }
         }, 100);
     }
 });
@@ -60,6 +65,11 @@ function loadStepContent(stepName) {
                     if (window.parameterManager) {
                         window.parameterManager.applyParametersToForm(stepName);
                     }
+                    
+                    // Decoy인 경우 마지막 실행 파라미터 로드
+                    if (stepName === 'decoy' && typeof loadLastDecoyParams === 'function') {
+                        loadLastDecoyParams();
+                    }
                 } else {
                     console.error('HTML 파일 읽기 실패:', result.error);
                 }
@@ -85,6 +95,11 @@ function loadStepContent(stepName) {
                 // 저장된 파라미터 적용
                 if (window.parameterManager) {
                     window.parameterManager.applyParametersToForm(stepName);
+                }
+                
+                // Decoy인 경우 마지막 실행 파라미터 로드
+                if (stepName === 'decoy' && typeof loadLastDecoyParams === 'function') {
+                    loadLastDecoyParams();
                 }
             })
             .catch(error => {
