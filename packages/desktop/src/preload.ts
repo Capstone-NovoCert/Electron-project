@@ -8,6 +8,7 @@ const electronAPI = {
   showOpenDialog: (options: any) => ipcRenderer.invoke('show-open-dialog', options),
   showSaveDialog: (options: any) => ipcRenderer.invoke('show-save-dialog', options),
   runDecoy: (params: any) => ipcRenderer.invoke('run-decoy', params),
+  runDenovo: (params: any) => ipcRenderer.invoke('run-denovo', params),
   readHtmlFile: (filePath: string) => ipcRenderer.invoke('read-html-file', filePath),
   // 파이프라인 관련 API
   getPipelineStatus: (executionId: string) => ipcRenderer.invoke('get-pipeline-status', executionId),

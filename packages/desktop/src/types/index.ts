@@ -15,6 +15,21 @@ export interface DecoyResult {
   error?: string;
 }
 
+export interface DenovoParams {
+  target_spectra_dir: string;
+  decoy_spectra_dir: string;
+  casanovo_yaml_path: string;
+  casanovo_model_path: string;
+}
+
+export interface DenovoResult {
+  success: boolean;
+  python_module_error?: boolean;
+  message: string;
+  output?: string;
+  error?: string;
+}
+
 export interface FileReadResult {
   success: boolean;
   content?: string;

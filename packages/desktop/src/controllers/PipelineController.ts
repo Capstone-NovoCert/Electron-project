@@ -1,5 +1,7 @@
 import { PipelineModel, PipelineParams, PipelineExecution } from '../models/Pipeline';
 import { runDecoyProgram } from '../services/DecoyService';
+import { runDenovoProgram } from '../services/DenovoService';
+import { DenovoParams } from '../types';
 import { spawn } from 'child_process';
 import * as path from 'path';
 
@@ -38,6 +40,48 @@ export class PipelineController {
       }
     } catch (error) {
       console.error('Decoy 파이프라인 실행 오류:', error);
+      return {
+        success: false,
+        message: '파이프라인 실행 중 오류가 발생했습니다.',
+        error: error instanceof Error ? error.message : String(error)
+      };
+    }
+  }
+
+  /**
+   * De novo 파이프라인 실행
+   */
+  static async runDenovo(params: DenovoParams): Promise<{ success: boolean; executionId?: string; message: string; error?: string }> {
+    try {
+      // 파이프라인 실행 기록 생성
+      const execution = await PipelineModel.create('denovo', params as any);
+      
+      // 상태를 running으로 업데이트
+      await PipelineModel.updateStatus(execution.id, 'running');
+
+      // De novo 프로그램 실행
+      const result = await runDenovoProgram(params);
+
+      if (result.success) {
+        // 성공 시 상태 업데이트
+        await PipelineModel.updateStatus(execution.id, 'completed', result);
+        return {
+          success: true,
+          executionId: execution.id,
+          message: result.message
+        };
+      } else {
+        // 실패 시 상태 업데이트
+        await PipelineModel.updateStatus(execution.id, 'failed', null, result.error);
+        return {
+          success: false,
+          executionId: execution.id,
+          message: result.message,
+          error: result.error
+        };
+      }
+    } catch (error) {
+      console.error('De novo 파이프라인 실행 오류:', error);
       return {
         success: false,
         message: '파이프라인 실행 중 오류가 발생했습니다.',

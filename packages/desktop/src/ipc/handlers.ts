@@ -57,6 +57,11 @@ export function registerIpcHandlers(): void {
     return await PipelineController.runDecoy(params);
   });
 
+  // De novo 파이프라인 실행
+  ipcMain.handle('run-denovo', async (event, params) => {
+    return await PipelineController.runDenovo(params);
+  });
+
   // 파이프라인 실행 상태 조회
   ipcMain.handle('get-pipeline-status', async (event, executionId) => {
     return await PipelineController.getExecutionStatus(executionId);
